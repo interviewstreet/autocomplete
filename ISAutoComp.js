@@ -43,10 +43,23 @@
                 case 'bootstrap':
                  $(this).typeahead({
                      source: function (query, process) {
-                              return $.get('data2.json', { query: query }, function (data) {
-                                           return process(data.options);
-                                                  });
-                                                     }
+                             $.ajax(
+                               {
+                               url: "/solr/select/?wt=json&q="+query,
+                               success: function (data) {
+                                   ret = new Array();
+                                   console.log(data);
+                                   d = JSON.parse(data)
+                                   for (var i=0; i< d.response.docs.length;i++)
+                                    {
+                                      console.log(d.response.docs[i]["name"])
+                                      ret.push(d.response.docs[i]["name"]);
+                                    }
+
+                                  return process(ret);
+                                     }
+                             });
+                           }
                 }); 
              }
             
